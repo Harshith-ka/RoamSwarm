@@ -68,12 +68,17 @@ VENUE OPERATIONAL FACTS:
 
 Return ONLY the narrative script.
 """
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
-            if response and response.text:
-                script = response.text.strip()
+            for model_candidate in ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-flash-lite-latest"]:
+                try:
+                    response = client.models.generate_content(
+                        model=model_candidate,
+                        contents=prompt
+                    )
+                    if response and response.text:
+                        script = response.text.strip()
+                        break
+                except Exception:
+                    continue
         except Exception as e:
             logger.warning(f"Gemini LLM story generation failed, using deterministic grounding: {e}")
 

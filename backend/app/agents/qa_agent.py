@@ -41,12 +41,17 @@ CRITICAL RULES:
 2. Use ONLY facts present in the context above.
 3. If the context does not contain the answer, explicitly state: "I don't have verified records on that specific detail in our grounded archives."
 """
-            res = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
-            if res and res.text:
-                answer = res.text.strip()
+            for model_candidate in ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-flash-lite-latest"]:
+                try:
+                    res = client.models.generate_content(
+                        model=model_candidate,
+                        contents=prompt
+                    )
+                    if res and res.text:
+                        answer = res.text.strip()
+                        break
+                except Exception:
+                    continue
         except Exception as e:
             logger.warning(f"Gemini QA error: {e}")
 
